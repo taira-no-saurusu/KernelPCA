@@ -2,6 +2,8 @@ import networkx as nx
 import collections
 import copy
 import numpy as np
+from scipy.sparse.linalg import svds
+import matplotlib.pyplot as plt
 
 """
 networkxのgraphインスタンスから隣接行列を返す
@@ -9,7 +11,7 @@ G: networkx.Graph
 return : 隣接行列
 """
 def nx_to_adj(G):
-    return np.array(nx.adjacency_matrix(G,weight=None).todense().astype(int))
+    return np.array(nx.adjacency_matrix(G).todense().astype(int))
 
 
 """
@@ -39,3 +41,48 @@ def adj_to_lap(g):
     # 次数行列を取得
     matrix_ord = adj_to_ord(g)
     return matrix_ord - g
+
+
+"""
+拡散カーネル。ラプラシアン行列を入力とする
+"""
+def diffusion_kernel(lap, T):
+    # 符号反転
+    lap = -1*lap
+   
+    # パラメータTをかける
+    lap = T*lap
+   
+    return np.exp(lap)
+
+
+"""
+networkxのGraphクラスからkarateclubを描画すると共に正解ラベルとしてラベルのリストを返す
+"""
+def draw_karateclub(G):
+    pos = nx.spring_layout(G)
+
+    color_list = [0 if G.nodes[i]["club"] ==
+                  "Mr. Hi" else 1 for i in G.nodes()]
+    # 色別に描画
+    nx.draw_networkx(G, pos, node_color=color_list, cmap=plt.cm.RdYlBu)
+    plt.show()
+    return color_list
+
+
+class PCA:
+    def __init__(self, n_components, tol=0.0, random_seed=0):
+        self.n_components = n_components
+        self.tol = tol
+        self.random_state_ = np.random.RandomState(random_seed)
+
+    def fit(self, X):
+        v0 = self.random_state_.randn(min(X.shape))
+        xbar = X.mean(axis=0)
+        Y = X - xbar
+        S = np.dot(Y.T, Y)
+        U, Sigma, VT = svds(S, k=self.n_components, tol=self.tol, v0=v0)
+        self.VT_ = VT[::-1, :]
+
+    def transform(self, X):
+        return self.VT_.dot(X.T).T
