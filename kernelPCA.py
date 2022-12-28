@@ -5,13 +5,24 @@ import numpy as np
 from scipy.sparse.linalg import svds
 import matplotlib.pyplot as plt
 
+
 """
 networkxのgraphインスタンスから隣接行列を返す
 G: networkx.Graph
-return : 隣接行列
+use_weight = 重み情報を使うかどうか(boolean)
+return : 隣接行列(ndaaray)
 """
-def nx_to_adj(G):
-    return np.array(nx.adjacency_matrix(G).todense().astype(int))
+def nx_to_adj(G,use_weight=True):
+    matrix = None
+    if use_weight:
+        print("=====this uses weight_infomation=====")
+        matrix = np.array(nx.adjacency_matrix(G).todense().astype(int))
+        pass
+    else:
+        print("=====this does not use weight_infomation=====")
+        matrix = np.array(nx.adjacency_matrix(G,weight = None).todense().astype(int))
+        pass
+    return matrix
 
 
 """
@@ -68,6 +79,23 @@ def draw_karateclub(G):
     nx.draw_networkx(G, pos, node_color=color_list, cmap=plt.cm.RdYlBu)
     plt.show()
     return color_list
+
+"""
+colorlist に基づいてベクトルデータを可視化
+"""
+def draw_embedded_vector(Y, colorlist):
+    fig, ax = plt.subplots()
+    for i in range(len(colorlist)):
+        ax.annotate(str(i), (Y[i, 0], Y[i, 1]))
+        if colorlist[i] == 0:
+            ax.scatter(Y[i, 0], Y[i, 1], c="b")
+            pass
+        elif colorlist[i] == 1:
+            ax.scatter(Y[i, 0], Y[i, 1], c="r")
+            pass
+
+    plt.show()
+
 
 
 class PCA:
