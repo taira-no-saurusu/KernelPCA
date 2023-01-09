@@ -93,6 +93,10 @@ def draw_embedded_vector(Y, colorlist):
         elif colorlist[i] == 1:
             ax.scatter(Y[i, 0], Y[i, 1], c="r")
             pass
+        elif colorlist[i] == 2:
+            ax.scatter(Y[i, 0], Y[i, 1],c="y")
+        elif colorlist[i] == 3:
+            ax.scatter(Y[i, 0], Y[i, 1], c="g")
 
     plt.show()
 
