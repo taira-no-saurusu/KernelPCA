@@ -95,6 +95,7 @@ def draw_embedded_vector(Y, colorlist):
             pass
         elif colorlist[i] == 2:
             ax.scatter(Y[i, 0], Y[i, 1],c="y")
+            
         elif colorlist[i] == 3:
             ax.scatter(Y[i, 0], Y[i, 1], c="g")
 
@@ -103,10 +104,10 @@ def draw_embedded_vector(Y, colorlist):
 
 
 class PCA:
-    def __init__(self, n_components, tol=0.0, random_seed=0):
+    def __init__(self, n_components, tol=0.0):
         self.n_components = n_components
         self.tol = tol
-        self.random_state_ = np.random.RandomState(random_seed)
+        self.random_state_ = np.random.RandomState()
 
     def fit(self, X):
         v0 = self.random_state_.randn(min(X.shape))
